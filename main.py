@@ -37,9 +37,6 @@ def label_emails(input_file):
         df = process_txt(input_file)
     else:
         st.warning("Unsupported file format. Please provide a CSV, XLSX, or TXT file.")
-        return
-
-    st.table(df)
 
 
 def process_csv(input_file):
@@ -62,8 +59,8 @@ def process_csv(input_file):
             results.append([email, label])
 
     # Display the results in a table
-    st.dataframe(pd.DataFrame(results, columns=['Email', 'Label']))
-
+    df = pd.DataFrame(results, columns=['Email', 'Label'])
+    return df
 
 def process_xlsx(input_file):
     df = pd.read_excel(input_file)
@@ -183,8 +180,8 @@ def main():
         input_file = st.file_uploader("Upload a CSV, XLSX, or TXT file", type=["csv", "xlsx", "txt"])
         if input_file:
             st.write("Processing...")
-            df = label_emails(input_file)
-            st.success("Processing completed.")
+            df = process_csv(input_file)
+            st.success("Processing completed. Displaying results:")
             st.dataframe(df)
 
 
