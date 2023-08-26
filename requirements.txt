@@ -1,0 +1,7 @@
+python-whois
+dnspython
+requests
+streamlit
+streamlit-extras
+jellyfish
+numpy
