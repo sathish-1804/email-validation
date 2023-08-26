@@ -61,9 +61,6 @@ def process_csv(input_file):
             writer.writerow([email, label])
             results.append([email, label])
 
-    # Move the temporary file to the desired output file
-    shutil.move(temp_file.name, 'Output file.csv')
-
     # Display the results in a table
     st.dataframe(pd.DataFrame(results, columns=['Email', 'Label']))
 
@@ -186,8 +183,9 @@ def main():
         input_file = st.file_uploader("Upload a CSV, XLSX, or TXT file", type=["csv", "xlsx", "txt"])
         if input_file:
             st.write("Processing...")
-            label_emails(input_file)
+            df = label_emails(input_file)
             st.success("Processing completed.")
+            st.dataframe(df)
 
 
 
