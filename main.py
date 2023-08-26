@@ -41,7 +41,7 @@ def label_emails(input_file):
 
 def process_csv(input_file):
     with open(input_file, 'r') as csvfile, \
-            NamedTemporaryFile(mode='w', delete=False) as temp_file:
+            NamedTemporaryFile(mode='w', delete=False, suffix='.csv', prefix='temp_output_') as temp_file:
         reader = csv.reader(csvfile)
         writer = csv.writer(temp_file)
 
@@ -54,8 +54,9 @@ def process_csv(input_file):
             label = label_email(email)
             writer.writerow([email, label])
 
-    # Replace the input file with the output file
+    # Move the temporary file to the desired output file
     shutil.move(temp_file.name, 'Output file.csv')
+
 
 def process_xlsx(input_file):
     df = pd.read_excel(input_file)
