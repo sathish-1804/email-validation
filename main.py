@@ -48,14 +48,21 @@ def process_csv(input_file):
         # Write the header row to the output file
         writer.writerow(['Email', 'Label'])
 
+        # Create a list to store the results
+        results = []
+
         # Process each row in the input file
         for row in reader:
             email = row[0].strip()
             label = label_email(email)
             writer.writerow([email, label])
+            results.append([email, label])
 
     # Move the temporary file to the desired output file
     shutil.move(temp_file.name, 'Output file.csv')
+
+    # Display the results in a table
+    st.dataframe(pd.DataFrame(results, columns=['Email', 'Label']))
 
 
 def process_xlsx(input_file):
