@@ -30,13 +30,16 @@ def label_emails(input_file):
     file_extension = input_file.name.split('.')[-1].lower()
 
     if file_extension == 'csv':
-        process_csv(input_file)
+        df = process_csv(input_file)
     elif file_extension == 'xlsx':
-        process_xlsx(input_file)
+        df = process_xlsx(input_file)
     elif file_extension == 'txt':
-        process_txt(input_file)
+        df = process_txt(input_file)
     else:
-        st.sidebar.warning("Unsupported file format. Please provide a CSV, XLSX, or TXT file.")
+        st.warning("Unsupported file format. Please provide a CSV, XLSX, or TXT file.")
+        return
+
+    st.table(df)
 
 
 def process_csv(input_file):
@@ -184,8 +187,7 @@ def main():
         if input_file:
             st.write("Processing...")
             label_emails(input_file)
-            st.success("Processing completed. Click below to download the results:")
-            st.download_button("Download Results", data="Output file.csv", file_name="Output file.csv", mime="text/csv")
+            st.success("Processing completed.")
 
 
 
