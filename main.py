@@ -40,27 +40,28 @@ def label_emails(input_file):
 
 
 def process_csv(input_file):
-    with open(input_file, 'r') as csvfile, \
-            NamedTemporaryFile(mode='w', delete=False, suffix='.csv', prefix='temp_output_') as temp_file:
-        reader = csv.reader(csvfile)
-        writer = csv.writer(temp_file)
-
-        # Write the header row to the output file
-        writer.writerow(['Email', 'Label'])
-
+    # Read the uploaded file as a DataFrame
+    if input_file:
+        if isinstance(input_file, str):  # For Streamlit sharing compatibility
+            df = pd.read_csv(input_file)
+        else:
+            df = pd.read_csv(input_file)
+        
         # Create a list to store the results
         results = []
 
-        # Process each row in the input file
-        for row in reader:
-            email = row[0].strip()
+        # Process each row in the input DataFrame
+        for index, row in df.iterrows():
+            email = row['Email'].strip()
             label = label_email(email)
-            writer.writerow([email, label])
             results.append([email, label])
 
-    # Display the results in a table
-    df = pd.DataFrame(results, columns=['Email', 'Label'])
-    return df
+        # Create a new DataFrame for results
+        result_df = pd.DataFrame(results, columns=['Email', 'Label'])
+        return result_df
+    else:
+        return pd.DataFrame(columns=['Email', 'Label'])
+
 
 def process_xlsx(input_file):
     df = pd.read_excel(input_file)
@@ -69,21 +70,20 @@ def process_xlsx(input_file):
 
 def process_txt(input_file):
     input_text = input_file.read().decode("utf-8").splitlines()
-    
-    with NamedTemporaryFile(mode='w', delete=False) as temp_file:
-        writer = csv.writer(temp_file)
 
-        # Write the header row to the output file
-        writer.writerow(['Email', 'Label'])
+    # Create a list to store the results
+    results = []
 
-        # Process each line in the input text
-        for line in input_text:
-            email = line.strip()
-            label = label_email(email)
-            writer.writerow([email, label])
+    for line in input_text:
+        email = line.strip()
+        label = label_email(email)
+        results.append([email, label])
 
-    # Replace the input file with the output file
-    shutil.move(temp_file.name, 'Output file.csv')
+    # Create a DataFrame for the results
+    result_df = pd.DataFrame(results, columns=['Email', 'Label'])
+
+    # Display the results in a table
+    st.dataframe(result_df)
 
 def main():
     with open('style.css') as f:
