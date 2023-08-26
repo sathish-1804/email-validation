@@ -43,30 +43,41 @@ def process_csv(input_file):
     # Read the uploaded file as a DataFrame
     if input_file:
         if isinstance(input_file, str):  # For Streamlit sharing compatibility
-            df = pd.read_csv(input_file)
+            df = pd.read_csv(input_file, header=None)
         else:
-            df = pd.read_csv(input_file)
+            df = pd.read_csv(input_file, header=None)
         
         # Create a list to store the results
         results = []
 
         # Process each row in the input DataFrame
         for index, row in df.iterrows():
-            email = row['Email'].strip()
+            email = row[0].strip()
             label = label_email(email)
             results.append([email, label])
 
         # Create a new DataFrame for results
         result_df = pd.DataFrame(results, columns=['Email', 'Label'])
+        result_df.index = range(1, len(result_df) + 1)  # Starting index from 1
         return result_df
     else:
         return pd.DataFrame(columns=['Email', 'Label'])
 
-
 def process_xlsx(input_file):
-    df = pd.read_excel(input_file)
-    df['Label'] = df['Email'].apply(label_email)
-    df.to_excel('Output file.xlsx', index=False)
+    df = pd.read_excel(input_file, header=None)
+    results = []
+
+    for index, row in df.iterrows():
+        email = row[0].strip()
+        label = label_email(email)
+        results.append([email, label])
+
+    result_df = pd.DataFrame(results, columns=['Email', 'Label'])
+    result_df.index = range(1, len(result_df) + 1)  # Starting index from 1
+    
+    # Display the results in a table
+    st.dataframe(result_df)
+
 
 def process_txt(input_file):
     input_text = input_file.read().decode("utf-8").splitlines()
@@ -81,6 +92,7 @@ def process_txt(input_file):
 
     # Create a DataFrame for the results
     result_df = pd.DataFrame(results, columns=['Email', 'Label'])
+    result_df.index = range(1, len(result_df) + 1)  # Starting index from 1
 
     # Display the results in a table
     st.dataframe(result_df)
@@ -180,9 +192,12 @@ def main():
         input_file = st.file_uploader("Upload a CSV, XLSX, or TXT file", type=["csv", "xlsx", "txt"])
         if input_file:
             st.write("Processing...")
-            df = process_csv(input_file)
-            st.success("Processing completed. Displaying results:")
-            st.dataframe(df)
+            if input_file.type == 'text/plain':
+                process_txt(input_file)
+            else:
+                df = process_csv(input_file)
+                st.success("Processing completed. Displaying results:")
+                st.dataframe(df)
 
 
 
