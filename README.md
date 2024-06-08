@@ -13,7 +13,7 @@ To run the Email Validation Tool locally, follow these steps:
 
 ```
 Clone the repository:
-git clone https://github.com/yourusername/email_validation_tool.git
+git clone https://github.com/sathish-1804/email_validation_tool.git
 
 Change the directory to the cloned repository:
 cd email_validation_tool
