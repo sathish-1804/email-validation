@@ -162,7 +162,7 @@ def main():
                             col1.metric(label="Syntax", value=result['syntaxValidation'])
                             col2.metric(label="MxRecord", value=result['MXRecord'])
                             col3.metric(label="Is Temporary", value=result['is Temporary'])
-                            style_metric_cards()
+            
                             
                             # Show SMTP connection status as a warning
                             if not result['smtpConnection']:
