@@ -14,29 +14,44 @@ resolver.nameservers = ['8.8.8.8']
 resolver.cache = dns.resolver.Cache()
 
 
+# def is_valid_email(email):
+#     # Check if "@" is present in the email
+#     if "@" not in email:
+#         return False
+
+#     local_part, domain_part = email.split('@')
+
+#     # Check for consecutive dots, hyphens, or underscores in the local part
+#     if re.search(r'\.{2}|-{2}|_{2}', local_part):
+#         return False
+
+#     # Check for consecutive dots, hyphens, or underscores in the domain part
+#     if re.search(r'\.{2}|-{2}|_{2}', domain_part):
+#         return False
+
+#     # Check for two consecutive dots, hyphens, or underscores anywhere in the email
+#     if re.search(r'\.\-|\-\.|\.\.|\_\-|\-\_|\_\_|\.\.|--', email):
+#         return False
+
+#     # Validate email syntax
+#     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+#     return re.match(pattern, email) is not None
+
 def is_valid_email(email):
-    # Check if "@" is present in the email
-    if "@" not in email:
-        return False
-
-    local_part, domain_part = email.split('@')
-
-    # Check for consecutive dots, hyphens, or underscores in the local part
-    if re.search(r'\.{2}|-{2}|_{2}', local_part):
-        return False
-
-    # Check for consecutive dots, hyphens, or underscores in the domain part
-    if re.search(r'\.{2}|-{2}|_{2}', domain_part):
-        return False
-
-    # Check for two consecutive dots, hyphens, or underscores anywhere in the email
-    if re.search(r'\.\-|\-\.|\.\.|\_\-|\-\_|\_\_|\.\.|--', email):
-        return False
-
-    # Validate email syntax
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
-
+    # Comprehensive regex for email validation
+    pattern = r'''
+        ^                         # Start of string
+        (?!.*[._%+-]{2})          # No consecutive special characters
+        [a-zA-Z0-9._%+-]{1,64}    # Local part: allowed characters and length limit
+        (?<![._%+-])              # No special characters at the end of local part
+        @                         # "@" symbol
+        [a-zA-Z0-9.-]+            # Domain part: allowed characters
+        (?<![.-])                 # No special characters at the end of domain
+        \.[a-zA-Z]{2,}$           # Top-level domain with minimum 2 characters
+    '''
+    
+    # Match the entire email against the pattern
+    return re.match(pattern, email, re.VERBOSE) is not None
 
 # mx record validation
 # Set the cache TTL (in seconds)
